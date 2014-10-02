@@ -19,9 +19,9 @@ from gs.group.member.subscribe.tests.subscribecommand import (
 from gs.group.member.subscribe.tests.confirmcommand import (
     TestConfirmCommand)
 from gs.group.member.subscribe.tests.subscribers import (
-    FailJoinerTest, SuccessJoinerTest, SendConfirmationTest)
-testCases = (TestSubscribeCommand, TestConfirmCommand, FailJoinerTest,
-             SuccessJoinerTest, SendConfirmationTest)
+    FailSubscriberTest, SuccessSubscriberTest, SendConfirmationTest)
+testCases = (TestSubscribeCommand, TestConfirmCommand, FailSubscriberTest,
+             SuccessSubscriberTest, SendConfirmationTest)
 
 
 def load_tests(loader, tests, pattern):

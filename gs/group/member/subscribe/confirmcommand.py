@@ -61,7 +61,7 @@ class ConfirmCommand(CommandABC):
         if confirmationId:
             ci = self.query.get_confirmation(addr, confirmationId)
             if ci:
-                confirmationInfo = Confirmation(**ci)
+                confirmationInfo = Confirmation(self.context, **ci)
                 if (confirmationInfo.email == addr):
                     try:
                         self.join(confirmationInfo, request)
@@ -92,11 +92,8 @@ class ConfirmCommand(CommandABC):
                     '<{addr}>: {subject}'
                 msg = m.format(addr=addr, subject=email['Subject'])
                 log.info(msg)
-                notifier = NotifyCannotConfirmId(
-                    confirmationInfo.site, request)
-                notifier.notify(confirmationInfo.userInfo,
-                                confirmationInfo.groupInfo,
-                                addr, confirmationId)
+                notifier = NotifyCannotConfirmId(self.context, request)
+                notifier.notify(addr, confirmationId)
                 retval = CommandResult.commandStop
         else:  # not confirmationId
             # Assume it is a normal email.
@@ -153,7 +150,7 @@ class Confirmation(object):
 
         # Because the email comes into Support we may be on a totally
         # different site. Get the correct site as the context.
-        siteRoot = self.group.site_root()
+        siteRoot = self.context.site_root()
         self.site = getattr(siteRoot.Content, siteId)
         self.siteInfo = createObject('groupserver.SiteInfo', self.site)
         # Get the user and group with the right context.

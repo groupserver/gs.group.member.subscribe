@@ -32,3 +32,26 @@ def faux_email(subject='join'):
         '\n'
         'Body would go here\n'.format(subject))
     return retval
+
+
+class FauxConfirmation(object):
+
+    def __init__(self, context=None, email='a.person@example.com',
+                 confirmationId='a0b1c2', userId='durk',
+                 groupId='example_group', siteId='example'):
+        self.context = context
+        self.email = email
+        self.confirmationId = confirmationId
+        self.userId = userId
+        self.groupId = groupId
+        self.siteId = siteId
+
+        self.site = 'This is not a site'
+        self.siteInfo = FauxSiteInfo()
+        self.siteInfo.id = siteId
+
+        self.userInfo = FauxUserInfo()
+        self.userInfo.id = userId
+
+        self.groupInfo = FauxGroupInfo()
+        self.groupInfo.id = groupId

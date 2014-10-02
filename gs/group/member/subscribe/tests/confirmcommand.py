@@ -19,7 +19,7 @@ from gs.group.member.subscribe.confirmcommand import (ConfirmCommand)
 import gs.group.member.subscribe.confirmcommand  # lint:ok
 import gs.group.member.subscribe.subscribecommand  # lint:ok
 from gs.group.list.command.result import CommandResult
-from .faux import (FauxGroup, faux_email)
+from .faux import (FauxGroup, faux_email, FauxConfirmation)
 
 
 class TestConfirmCommand(TestCase):
@@ -57,24 +57,42 @@ class TestConfirmCommand(TestCase):
         'Is a stop called if there is no confirmation info found?'
         mockQuery.get_confirmation.return_value = None
         e = faux_email(self.confirmSubject)
-        c = ConfirmCommand(self.fauxGroup)
-        r = c.process(e, None)
+        n = 'gs.group.member.subscribe.confirmcommand.'\
+            'NotifyCannotConfirmId'
+        with patch(n):
+            c = ConfirmCommand(self.fauxGroup)
+            r = c.process(e, None)
 
         self.assertEqual(CommandResult.commandStop, r)
+
+    @staticmethod
+    def faux_query(email):
+        retval = {
+            'email': email,
+            'confirmationId': '1a2b3c',
+            'userId': 'durk',
+            'groupId': 'example_group',
+            'siteId': 'example', }
+        return retval
 
     @patch.object(ConfirmCommand, 'query')
     def test_info_found_addr_missmatch(self, mockQuery):
         'Is a stop called if there is confirmation info found?'
-        mockQuery.get_confirmation.return_value = {
-            'email': 'missmatch',
-        }
+        mockQuery.get_confirmation.return_value = \
+            self.faux_query('missmatch')
         e = faux_email(self.confirmSubject)
-        n = 'gs.group.member.subscribe.subscribecommand.log'
+        n = 'gs.group.member.subscribe.confirmcommand.log'
         with patch(n) as patchedLog:
-            c = ConfirmCommand(self.fauxGroup)
             patchedLog.info.return_value = None
-            r = c.process(e, None)
-            args, varArgs = patchedLog.info.call_args
+            n = 'gs.group.member.subscribe.confirmcommand.Confirmation'
+            with patch(n) as pc:
+                pc.return_value = FauxConfirmation()
+                n = 'gs.group.member.subscribe.confirmcommand.'\
+                    'NotifyCannotConfirmAddress'
+                with patch(n):
+                    c = ConfirmCommand(self.fauxGroup)
+                    r = c.process(e, None)
+        args, varArgs = patchedLog.info.call_args
 
         self.assertEqual(CommandResult.commandStop, r)
         self.assertIn('does not match', args[0])
@@ -82,16 +100,18 @@ class TestConfirmCommand(TestCase):
     @patch.object(ConfirmCommand, 'query')
     def test_info_found_join(self, mockQuery):
         'Is ConfirmCommand.join called if the address matches?'
-        mockQuery.get_confirmation.return_value = {
-            'email': 'member@example.com',
-        }
+        mockQuery.get_confirmation.return_value = \
+            self.faux_query('member@example.com')
         e = faux_email(self.confirmSubject)
         with patch.object(ConfirmCommand, 'join') as patchedJoin:
-            c = ConfirmCommand(self.fauxGroup)
-            r = c.process(e, None)
-            patchedJoin.assert_called_with(
-                mockQuery.get_confirmation.return_value, None)
+            n = 'gs.group.member.subscribe.confirmcommand.Confirmation'
+            with patch(n) as pc:
+                pc.return_value = \
+                    FauxConfirmation(email='member@example.com')
+                c = ConfirmCommand(self.fauxGroup)
+                r = c.process(e, None)
 
+        patchedJoin.assert_called_with(pc.return_value, None)
         self.assertEqual(CommandResult.commandStop, r)
 
     # TODO Test a member joining

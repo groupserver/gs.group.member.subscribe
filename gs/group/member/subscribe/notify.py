@@ -83,41 +83,43 @@ class NotifyAlreadyAMember(NotifierABC):
         self.reset_content_type()
 
 
-class NotifyCannotConfirmAddress(NotifierABC):
+class NotifyCannotConfirmAddress(AnonymousNotifierABC):
     'The email telling someone that the From address does not match'
     textTemplateName = 'gs-group-member-subscribe-confirm-fail-addr.txt'
     htmlTemplateName = 'gs-group-member-subscribe-confirm-fail-addr.html'
 
-    def notify(self, userInfo, groupInfo, addr, confirmAddr):
+    def notify(self, groupInfo, addr, confirmAddr):
         subject = _('confirm-failed-addr-subject',
                     'Problem confirming your subscription to ${groupName}',
                     mapping={'groupName': groupInfo.name})
         translatedSubject = translate(subject)
-        text = self.textTemplate(userInfo=userInfo, groupInfo=groupInfo)
-        html = self.htmlTemplate(userInfo=userInfo, groupInfo=groupInfo)
+        text = self.textTemplate(groupInfo=groupInfo)
+        html = self.htmlTemplate(groupInfo=groupInfo)
 
-        ms = MessageSender(self.context, userInfo)
-        ms.send_message(translatedSubject, text, html,
-                        toAddresses=[addr, confirmAddr])
+        fromAddr = self.fromAddr(groupInfo.siteInfo)
+        message = self.create_message(addr, fromAddr, translatedSubject,
+                                      text, html)
+        send_email(groupInfo.siteInfo.get_support_email(), addr, message)
         self.reset_content_type()
 
 
-class NotifyCannotConfirmId(NotifierABC):
+class NotifyCannotConfirmId(AnonymousNotifierABC):
     'The email telling someone that the Confirmation ID is garbled'
     textTemplateName = 'gs-group-member-subscribe-confirm-fail-id.txt'
     htmlTemplateName = 'gs-group-member-subscribe-confirm-fail-id.html'
 
-    def notify(self, userInfo, groupInfo, addr, confirmationId):
+    def notify(self, siteInfo, addr, confirmationId):
         subject = _('confirm-failed-id-subject',
-                    'Problem confirming your subscription to ${groupName}',
-                    mapping={'groupName': groupInfo.name})
+                    'Problem confirming your subscription (action '
+                    'required)')
         translatedSubject = translate(subject)
-        text = self.textTemplate(userInfo=userInfo, groupInfo=groupInfo,
+        text = self.textTemplate(address=addr,
                                  confirmationId=confirmationId)
-        html = self.htmlTemplate(userInfo=userInfo, groupInfo=groupInfo,
+        html = self.htmlTemplate(address=addr,
                                  confirmationId=confirmationId)
 
-        ms = MessageSender(self.context, userInfo)
-        ms.send_message(translatedSubject, text, html,
-                        toAddresses=[addr])
+        fromAddr = self.fromAddr(siteInfo)
+        message = self.create_message(addr, fromAddr, translatedSubject,
+                                      text, html)
+        send_email(siteInfo.get_support_email(), addr, message)
         self.reset_content_type()

@@ -49,13 +49,13 @@ class TestSubscribeCommand(TestCase):
         with patch.object(SubscribeCommand, 'get_userInfo') as g_ui:
             u = FauxUserInfo()
             g_ui.return_value = u
-            n = 'gs.group.member.subscribe.listcommand.ISubscriber'
+            n = 'gs.group.member.subscribe.subscribecommand.ISubscriber'
             with patch(n) as s:
                 sInstance = s.return_value
                 sInstance.subscribe.side_effect =\
                     gs.group.member.subscribe.subscribecommand.CannotJoin
                 n = 'gs.group.member.subscribe.subscribecommand.'\
-                    'NotifyCannotJoin'
+                    'NotifyCannotSubscribe'
                 with patch(n):
                     sc = SubscribeCommand(FauxGroup)
                     e = faux_email()
@@ -70,7 +70,8 @@ class TestSubscribeCommand(TestCase):
         with patch.object(SubscribeCommand, 'get_userInfo') as g_ui:
             u = FauxUserInfo()
             g_ui.return_value = u
-            with patch('gs.group.member.subscribe.listcommand.ISubscriber'):
+            n = 'gs.group.member.subscribe.subscribecommand.ISubscriber'
+            with patch(n):
                 sc = SubscribeCommand(FauxGroup)
                 e = faux_email()
                 r = sc.process(e, None)
