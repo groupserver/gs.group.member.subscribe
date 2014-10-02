@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- Copyright © 2013 OnlineGroups.net and Contributors. -->
+<!-- All Rights Reserved. -->
+
+<!-- This software is subject to the provisions of the Zope Public -->
+<!-- License, Version 2.1 (ZPL).  A copy of the ZPL should accompany this -->
+<!-- distribution. -->
+
+<!-- THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED -->
+<!-- WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED -->
+<!-- WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND -->
+<!-- FITNESS FOR A PARTICULAR PURPOSE. -->
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:i18n="http://namespaces.zope.org/i18n">
+
+  <include package="zope.viewlet" file="meta.zcml" />
+  <i18n:registerTranslations directory="locales" />
+
+  <!-- The subscribe command -->
+  <adapter
+    name="subscribe"
+    for="gs.group.base.interfaces.IGSGroupMarker"
+    provides="gs.group.list.command.interfaces.IEmailCommand"
+    factory=".subscribecommand.SubscribeCommand" />
+
+  <!--The myriad of "subscribers", most of which do not join -->
+  <!-- anyone to anything. -->
+  <adapter
+    for="gs.group.privacy.interfaces.IPublic"
+    provides=".interfaces.ISubscriber"
+    factory=".subscribers.PublicSubscriber" />
+  <adapter
+    for="gs.group.privacy.interfaces.IPublicToSiteMember"
+    provides=".interfaces.ISubscriber"
+    factory=".subscribers.PublicToSiteMemberSubscriber" />
+  <adapter
+    for="gs.group.privacy.interfaces.IPrivate"
+    provides=".interfaces.ISubscriber"
+    factory=".subscribers.PrivateSubscriber" />
+  <adapter
+    for="gs.group.privacy.interfaces.ISecret"
+    provides=".interfaces.ISubscriber"
+    factory=".subscribers.SecretSubscriber" />
+  <adapter
+    for="gs.group.privacy.interfaces.IOdd"
+    provides=".interfaces.ISubscriber"
+    factory=".subscribers.OddSubscriber" />
+
+ <!-- The confirm subscription notification -->
+  <browser:page
+    for="gs.group.base.interfaces.IGSGroupMarker"
+    name="gs-group-member-join-confirm.html"
+    class=".notifymessages.ConfirmSubscription"
+    template="browser/templates/confirm-subscribe.pt"
+    permission="zope2.View"/>
+  <browser:page
+    for="gs.group.base.interfaces.IGSGroupMarker"
+    name="gs-group-member-join-confirm.txt"
+    class=".notifymessages.ConfirmSubscriptionText"
+    template="browser/templates/confirm-subscribe-txt.pt"
+    permission="zope2.View"/>
+
+  <!-- The confirm command -->
+  <adapter
+    name="confirm"
+    for="gs.group.base.interfaces.IGSGroupMarker"
+    provides="gs.group.list.command.interfaces.IEmailCommand"
+    factory=".confirmcommand.ConfirmCommand" />
+
+  <!--The audit factory-->
+  <utility
+    factory=".audit.SubscribeAuditEventFactory"
+    name="gs.group.member.subscribe"
+    permission="zope.Public" />
+
+</configure>
