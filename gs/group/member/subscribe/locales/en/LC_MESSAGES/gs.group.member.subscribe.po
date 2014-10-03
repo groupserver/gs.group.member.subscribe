@@ -1,0 +1,77 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2014-10-03 00:35+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: DOMAIN\n"
+
+#. Default: "Already subscribed ${groupName}"
+#: ./notify.py:74
+msgid "already-subscribed-subject"
+msgstr "Already subscribed to ${groupName}"
+
+#. Default: "Problem confirming your subscription to ${groupName}"
+#: ./notify.py:92
+msgid "confirm-failed-addr-subject"
+msgstr "Problem confirming your subscription to ${groupName}"
+
+#. Default: "Problem confirming your subscription (action required)"
+#: ./notify.py:112
+msgid "confirm-failed-id-subject"
+msgstr "Problem confirming your subscription (action required)"
+
+#. Default: "Confirm you want to subscribe to ${groupName} (action required) ID-${confirmationId}"
+#: ./notify.py:32
+msgid "confirm-subject"
+msgstr "Confirm you want to subscribe to ${groupName} (action required) ID-${confirmationId}"
+
+#. Default: "People cannot join ${groupName}"
+#: ./subscribers.py:136
+msgid "odd-group-cannot-join"
+msgstr "People cannot join ${groupName}"
+
+#. Default: "Visit the page for ${groupName} to request membership: ${groupUrl}"
+#: ./subscribers.py:118
+msgid "private-group-cannot-join"
+msgstr "Visit the page for ${groupName} to request membership: ${groupUrl}"
+
+#. Default: "Only members of ${siteName} can join ${groupName}"
+#: ./subscribers.py:105
+msgid "public-site-group-cannot-join"
+msgstr "Only members of ${siteName} can join ${groupName}"
+
+#. Default: "Cannot subscribe ${groupName}"
+#: ./notify.py:54
+msgid "refuse-subject"
+msgstr "Cannot subscribe ${groupName}"
+
+#. Default: "Only people that have been invited can join ${groupName}"
+#: ./subscribers.py:128
+msgid "secret-group-cannot-join"
+msgstr "Only people that have been invited can join ${groupName}"
+
+#. Default: "Hello,\n\nI received an email asking me to confirm my subscription to\n${groupName}\n    ${groupUrl}\nand..."
+#: ./notifymessages.py:31
+msgid "support-message-confirm-subscription-body"
+msgstr ""
+"Hello,\n"
+"\n"
+"I received an email asking me to confirm my subscription to\n"
+"${groupName}\n"
+"    ${groupUrl}\n"
+"and..."
+
+#. Default: "Confirm subscription"
+#: ./notifymessages.py:28
+msgid "support-message-confirm-subscription-subject"
+msgstr "Confirm subscription"
+

@@ -64,7 +64,9 @@ class ConfirmCommand(CommandABC):
                 confirmationInfo = Confirmation(self.context, **ci)
                 if (confirmationInfo.email == addr):
                     try:
+                        # VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
                         self.join(confirmationInfo, request)
+                        # AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
                     except GroupMember:
                         notifier = NotifyAlreadyAMember(
                             confirmationInfo.site, request)

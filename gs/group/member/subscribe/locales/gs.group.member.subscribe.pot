@@ -1,0 +1,74 @@
+# --- PLEASE EDIT THE LINES BELOW CORRECTLY ---
+# SOME DESCRIPTIVE TITLE.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2014-10-03 00:35+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: groupserver\n"
+
+#. Default: "Already subscribed ${groupName}"
+#: ./notify.py:74
+msgid "already-subscribed-subject"
+msgstr ""
+
+#. Default: "Problem confirming your subscription to ${groupName}"
+#: ./notify.py:92
+msgid "confirm-failed-addr-subject"
+msgstr ""
+
+#. Default: "Problem confirming your subscription (action required)"
+#: ./notify.py:112
+msgid "confirm-failed-id-subject"
+msgstr ""
+
+#. Default: "Confirm you want to subscribe to ${groupName} (action required) ID-${confirmationId}"
+#: ./notify.py:32
+msgid "confirm-subject"
+msgstr ""
+
+#. Default: "People cannot join ${groupName}"
+#: ./subscribers.py:136
+msgid "odd-group-cannot-join"
+msgstr ""
+
+#. Default: "Visit the page for ${groupName} to request membership: ${groupUrl}"
+#: ./subscribers.py:118
+msgid "private-group-cannot-join"
+msgstr ""
+
+#. Default: "Only members of ${siteName} can join ${groupName}"
+#: ./subscribers.py:105
+msgid "public-site-group-cannot-join"
+msgstr ""
+
+#. Default: "Cannot subscribe ${groupName}"
+#: ./notify.py:54
+msgid "refuse-subject"
+msgstr ""
+
+#. Default: "Only people that have been invited can join ${groupName}"
+#: ./subscribers.py:128
+msgid "secret-group-cannot-join"
+msgstr ""
+
+#. Default: "Hello,\n\nI received an email asking me to confirm my subscription to\n${groupName}\n    ${groupUrl}\nand..."
+#: ./notifymessages.py:31
+msgid "support-message-confirm-subscription-body"
+msgstr ""
+
+#. Default: "Confirm subscription"
+#: ./notifymessages.py:28
+msgid "support-message-confirm-subscription-subject"
+msgstr ""
+
