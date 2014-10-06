@@ -238,7 +238,7 @@ class SubscribeAuditor(object):
             ed = '{0}-{1}-{2}-{4}-{5}-{6}'
             eventId = to_id(ed.format(
                 self.groupInfo.name, self.groupInfo.id, d,
-                self.sitenfo.name, self.siteInfo.id, instanceDatum,
+                self.siteInfo.name, self.siteInfo.id, instanceDatum,
                 supplementaryDatum))
 
         e = self.factory(
