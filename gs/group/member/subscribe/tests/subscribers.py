@@ -36,16 +36,19 @@ class FailSubscriberTest(TestCase):
     def test_odd_subscribe_fail(self):
         'Test that we always fail at joining an odd group'
         j = OddSubscriber(FauxVisibility())
+        j.groupVisibility.isOdd = True
         self.assertFailSubscribe(j, 'odd-group-cannot-join')
 
     def test_secret_subscribe_fail(self):
         'Test that we always fail at joining a secret group'
         j = SecretSubscriber(FauxVisibility())
+        j.groupVisibility.isSecret = True
         self.assertFailSubscribe(j, 'secret-group-cannot-join')
 
     def test_private_join_fail(self):
         'Test that we always fail at joining a secret group'
         j = PrivateSubscriber(FauxVisibility())
+        j.groupVisibility.isPrivate = True
         self.assertFailSubscribe(j, 'private-group-cannot-join')
 
 
@@ -55,6 +58,7 @@ class SuccessSubscriberTest(TestCase):
     def test_ptsm_join_anon(self):
         'Ensure Anonymous cannot join a Public To Site Member site'
         j = PublicToSiteMemberSubscriber(FauxVisibility())
+        j.groupVisibility.isPublicToSite = True
         with self.assertRaises(CannotJoin) as e:
             j.subscribe(None, faux_email(), None)
         self.assertIn('public-site-group-cannot-join', str(e.exception))
@@ -63,6 +67,7 @@ class SuccessSubscriberTest(TestCase):
     def test_ptsm_join_not_site_member(self, umos):
         'Ensure that people that are not site members are blocked'
         j = PublicToSiteMemberSubscriber(FauxVisibility())
+        j.groupVisibility.isPublicToSite = True
         u = FauxUserInfo()
         umos.return_value = False
         with self.assertRaises(CannotJoin) as e:
@@ -73,6 +78,7 @@ class SuccessSubscriberTest(TestCase):
     def test_ptsm_join_group_member(self, umos):
         'Ensure that group members cannot join a group'
         j = PublicToSiteMemberSubscriber(FauxVisibility())
+        j.groupVisibility.isPublicToSite = True
         u = FauxUserInfo()
         umos.return_value = True
         n = 'gs.group.member.subscribe.subscribers.user_member_of_group'
@@ -90,6 +96,7 @@ class SuccessSubscriberTest(TestCase):
         with patch.object(PublicToSiteMemberSubscriber,
                           'send_confirmation') as sc:
             j = PublicToSiteMemberSubscriber(FauxVisibility())
+            j.groupVisibility.isPublicToSite = True
             n = 'gs.group.member.subscribe.subscribers.user_member_of_group'
             with patch(n) as umog:
                 umog.return_value = False
@@ -102,6 +109,7 @@ class SuccessSubscriberTest(TestCase):
         u = FauxUserInfo()
         email = faux_email()
         j = PublicSubscriber(FauxVisibility())
+        j.groupVisibility.isPublic = True
         with self.assertRaises(GroupMember):
             j.subscribe(u, email, None)
 
@@ -113,6 +121,7 @@ class SuccessSubscriberTest(TestCase):
         email = faux_email()
         with patch.object(PublicSubscriber, 'send_confirmation') as sc:
             j = PublicSubscriber(FauxVisibility())
+            j.groupVisibility.isPublic = True
             j.subscribe(u, email, None)
         sc.assert_called_once_with(email, 'member@example.com', u, None)
 
@@ -126,6 +135,7 @@ class SuccessSubscriberTest(TestCase):
             with patch.object(PublicSubscriber, 'create_user') as cu:
                 cu.return_value = u
                 j = PublicSubscriber(FauxVisibility())
+                j.groupVisibility.isPublic = True
                 j.subscribe(None, email, None)
         sc.assert_called_once_with(email, 'member@example.com', u, None)
         cu.assert_called_once_with('<member@example.com>')
