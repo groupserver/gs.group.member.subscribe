@@ -37,6 +37,7 @@ class Subscriber(object):
     __metaclass__ = ABCMeta
 
     def __init__(self, groupVisibility):
+        self.groupVisibility = groupVisibility
         self.groupInfo = groupVisibility.groupInfo
 
     @abstractmethod
@@ -51,6 +52,7 @@ class PublicSubscriber(Subscriber):
         return retval
 
     def subscribe(self, userInfo, email, request):
+        assert self.groupVisibility.isPublic
         if userInfo and user_member_of_group(userInfo, self.groupInfo):
             raise GroupMember()
         ui = userInfo if userInfo else self.create_user(email['From'])
@@ -99,6 +101,7 @@ class PublicToSiteMemberSubscriber(PublicSubscriber):
         return retval
 
     def subscribe(self, userInfo, email, request):
+        assert self.groupVisibility.isPublicToSite
         siteInfo = self.groupInfo.siteInfo
         if ((not userInfo) or (not user_member_of_site(userInfo,
                                                        siteInfo))):
@@ -115,6 +118,7 @@ class PublicToSiteMemberSubscriber(PublicSubscriber):
 
 class PrivateSubscriber(Subscriber):
     def subscribe(self, userInfo, email, request):
+        assert self.groupVisibility.isPrivate
         msg = _('private-group-cannot-join',
                 'Visit the page for ${groupName} to request membership: '
                 '${groupUrl}',
@@ -125,6 +129,7 @@ class PrivateSubscriber(Subscriber):
 
 class SecretSubscriber(Subscriber):
     def subscribe(self, userInfo, email, request):
+        assert self.groupVisibility.isSecret
         msg = _('secret-group-cannot-join',
                 'Only people that have been invited can join ${groupName}',
                 mapping={'groupName': self.groupInfo.name})
@@ -133,6 +138,7 @@ class SecretSubscriber(Subscriber):
 
 class OddSubscriber(Subscriber):
     def subscribe(self, userInfo, email, request):
+        assert self.groupVisibility.isOdd
         msg = _('odd-group-cannot-join', 'People cannot join ${groupName}',
                 mapping={'groupName': self.groupInfo.name})
         raise CannotJoin(msg)
