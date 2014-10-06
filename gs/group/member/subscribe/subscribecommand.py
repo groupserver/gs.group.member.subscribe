@@ -55,9 +55,9 @@ class SubscribeCommand(CommandABC):
             retval = CommandResult.commandStop
         except CannotJoin as cj:
             auditor.info(CANNOT_JOIN, addr, cj.message)
-            groupsFolder = self.groupInfo.groupObj.aq_parent
+            groupsFolder = self.groupInfo.groupObj
             notifier = NotifyCannotSubscribe(groupsFolder, request)
-            notifier.notify(cj, addr, self.groupInfo)
+            notifier.notify(cj.message, addr, self.groupInfo)
             retval = CommandResult.commandStop
         except GroupMember:
             assert userInfo, 'None is a group member.'

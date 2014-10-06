@@ -50,13 +50,13 @@ class NotifyCannotSubscribe(AnonymousNotifierABC):
     textTemplateName = 'gs-group-member-subscribe-refuse.txt'
     htmlTemplateName = 'gs-group-member-subscribe-refuse.html'
 
-    def notify(self, addr, groupInfo):
+    def notify(self, message, addr, groupInfo):
         subject = _('refuse-subject',
-                    'Cannot subscribe ${groupName}',
+                    'Cannot subscribe to ${groupName}',
                     mapping={'groupName': groupInfo.name})
         translatedSubject = translate(subject)
-        text = self.textTemplate(emailAddress=addr, groupInfo=groupInfo)
-        html = self.htmlTemplate(emailAddress=addr, groupInfo=groupInfo)
+        text = self.textTemplate(groupInfo=groupInfo, reason=message)
+        html = self.htmlTemplate(groupInfo=groupInfo, reason=message)
 
         fromAddr = self.fromAddr(groupInfo.siteInfo)
         message = self.create_message(addr, fromAddr, translatedSubject,
@@ -108,7 +108,7 @@ class NotifyCannotConfirmId(AnonymousNotifierABC):
     textTemplateName = 'gs-group-member-subscribe-confirm-fail-id.txt'
     htmlTemplateName = 'gs-group-member-subscribe-confirm-fail-id.html'
 
-    def notify(self, siteInfo, addr, confirmationId):
+    def notify(self, groupInfo, addr, confirmationId):
         subject = _('confirm-failed-id-subject',
                     'Problem confirming your subscription (action '
                     'required)')
@@ -118,8 +118,8 @@ class NotifyCannotConfirmId(AnonymousNotifierABC):
         html = self.htmlTemplate(address=addr,
                                  confirmationId=confirmationId)
 
-        fromAddr = self.fromAddr(siteInfo)
+        fromAddr = self.fromAddr(groupInfo.siteInfo)
         message = self.create_message(addr, fromAddr, translatedSubject,
                                       text, html)
-        send_email(siteInfo.get_support_email(), addr, message)
+        send_email(groupInfo.siteInfo.get_support_email(), addr, message)
         self.reset_content_type()

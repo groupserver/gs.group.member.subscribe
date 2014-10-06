@@ -16,8 +16,6 @@ from __future__ import absolute_import, unicode_literals
 from zope.cachedescriptors.property import Lazy
 from zope.i18n import translate
 from gs.content.email.base import GroupEmail, TextMixin
-from Products.GSGroup.interfaces import IGSMailingListInfo
-from gs.profile.email.base.emailuser import EmailUser
 from . import GSMessageFactory as _
 
 
@@ -44,4 +42,30 @@ class ConfirmSubscriptionText(ConfirmSubscription, TextMixin):
     def __init__(self, context, request):
         super(ConfirmSubscriptionText, self).__init__(context, request)
         filename = 'confirm-%s.txt' % self.groupInfo.id
+        self.set_header(filename)
+
+
+class RefuseSubscription(GroupEmail):
+    'Subscription refused message'
+    @Lazy
+    def supportEmail(self):
+        subject = _('support-message-refuse-subscription-subject',
+                    'Cannot subscribe')
+        translatedSubject = translate(subject)
+        body = _('support-message-confirm-subscription-body',
+                 'Hello,\n\nI received an email saying that I could not '
+                 'subscribe to\n${groupName}\n    '
+                 '${groupUrl}\nand...',
+                 mapping={'groupName': self.groupInfo.name,
+                          'groupUrl': self.groupInfo.url})
+        translatedBody = translate(body)
+        retval = self.mailto(self.siteInfo.get_support_email(),
+                             translatedSubject, translatedBody)
+        return retval
+
+
+class RefuseSubscriptionText(RefuseSubscription, TextMixin):
+    def __init__(self, context, request):
+        super(RefuseSubscriptionText, self).__init__(context, request)
+        filename = 'refuse-%s.txt' % self.groupInfo.id
         self.set_header(filename)

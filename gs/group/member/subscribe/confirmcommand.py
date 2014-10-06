@@ -99,7 +99,8 @@ class ConfirmCommand(CommandABC):
                 msg = m.format(addr=addr, subject=email['Subject'])
                 log.info(msg)
                 notifier = NotifyCannotConfirmId(self.context, request)
-                notifier.notify(addr, confirmationId)
+                notifier.notify(confirmationInfo.groupInfo, addr,
+                                confirmationId)
                 retval = CommandResult.commandStop
         else:  # not confirmationId
             # Assume it is a normal email.

@@ -51,16 +51,34 @@
  <!-- The confirm subscription notification -->
   <browser:page
     for="gs.group.base.interfaces.IGSGroupMarker"
-    name="gs-group-member-join-confirm.html"
+    name="gs-group-member-subscribe-confirm.html"
     class=".notifymessages.ConfirmSubscription"
     template="browser/templates/confirm-subscribe.pt"
     permission="zope2.View"/>
   <browser:page
     for="gs.group.base.interfaces.IGSGroupMarker"
-    name="gs-group-member-join-confirm.txt"
+    name="gs-group-member-subscribe-confirm.txt"
     class=".notifymessages.ConfirmSubscriptionText"
     template="browser/templates/confirm-subscribe-txt.pt"
     permission="zope2.View"/>
+
+  <!--Cannot subscribe notifications: gs-group-member-subscribe-refuse -->
+  <browser:page
+    for="gs.group.base.interfaces.IGSGroupMarker"
+    name="gs-group-member-subscribe-refuse.html"
+    class=".notifymessages.RefuseSubscription"
+    template="browser/templates/refuse-subscribe.pt"
+    permission="zope2.View"/>
+  <browser:page
+    for="gs.group.base.interfaces.IGSGroupMarker"
+    name="gs-group-member-subscribe-refuse.txt"
+    class=".notifymessages.RefuseSubscriptionText"
+    template="browser/templates/refuse-subscribe-txt.pt"
+    permission="zope2.View"/>
+
+  <!--TODO: Already a member notifications -->
+  <!--TODO: Address-mismatch in confirmation -->
+  <!--TODO: ID not foun din confirmation -->
 
   <!-- The confirm command -->
   <adapter

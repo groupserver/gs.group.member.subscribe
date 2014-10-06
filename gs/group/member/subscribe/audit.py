@@ -112,10 +112,10 @@ class CannotJoinEvent(BasicAuditEvent):
     ''' An audit-trail event representing a person being refused permission
 to join a group.'''
     def __init__(self, context, eventId, d, userInfo, siteInfo,
-                 groupInfo, email):
+                 groupInfo, email, reason):
         super(CannotJoinEvent, self).__init__(
             context, eventId,  CONFIRM, d, userInfo, userInfo,
-            siteInfo, groupInfo, email, None, SUBSYSTEM)
+            siteInfo, groupInfo, email, reason, SUBSYSTEM)
 
     def __unicode__(self):
         if self.userInfo:
@@ -125,7 +125,7 @@ to join a group.'''
         else:
             r = 'Refusing to allow the person with the address <{email}>'\
                 'to subscribe to {group.name} ({group.id}) on {site.name} '\
-                '({site.id}: {reason}'
+                '({site.id}): {reason}'
 
         retval = r.format(user=self.userInfo, group=self.groupInfo,
                           site=self.siteInfo, email=self.instanceDatum,

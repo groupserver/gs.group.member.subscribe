@@ -17,6 +17,7 @@ from abc import ABCMeta, abstractmethod
 from email.utils import parseaddr
 from zope.cachedescriptors.property import Lazy
 from zope.component import createObject
+from zope.i18n import translate
 from gs.core import to_id
 from gs.group.member.base import user_member_of_site, user_member_of_group
 from Products.GSProfile.utils import create_user_from_email
@@ -105,10 +106,11 @@ class PublicToSiteMemberSubscriber(PublicSubscriber):
         siteInfo = self.groupInfo.siteInfo
         if ((not userInfo) or (not user_member_of_site(userInfo,
                                                        siteInfo))):
-            msg = _('public-site-group-cannot-join',
-                    'Only members of ${siteName} can join ${groupName}',
-                    mapping={'siteName': siteInfo.name,
-                             'groupName': self.groupInfo.name})
+            m = _('public-site-group-cannot-join',
+                  'Only members of ${siteName} can join ${groupName}.',
+                  mapping={'siteName': siteInfo.name,
+                           'groupName': self.groupInfo.name})
+            msg = translate(m)
             raise CannotJoin(msg)
         elif user_member_of_group(userInfo, self.groupInfo):
             raise GroupMember()
@@ -119,26 +121,29 @@ class PublicToSiteMemberSubscriber(PublicSubscriber):
 class PrivateSubscriber(Subscriber):
     def subscribe(self, userInfo, email, request):
         assert self.groupVisibility.isPrivate
-        msg = _('private-group-cannot-join',
-                'Visit the page for ${groupName} to request membership: '
-                '${groupUrl}',
-                mapping={'groupName': self.groupInfo.name,
-                         'groupUrl': self.groupInfo.url})
+        m = _('private-group-cannot-join',
+              'You must request membership to join ${groupName}; visit '
+              'the page for  to request membership: ${groupUrl}',
+              mapping={'groupName': self.groupInfo.name,
+                       'groupUrl': self.groupInfo.url})
+        msg = translate(m)
         raise CannotJoin(msg)
 
 
 class SecretSubscriber(Subscriber):
     def subscribe(self, userInfo, email, request):
         assert self.groupVisibility.isSecret
-        msg = _('secret-group-cannot-join',
-                'Only people that have been invited can join ${groupName}',
-                mapping={'groupName': self.groupInfo.name})
+        m = _('secret-group-cannot-join',
+              'Only people that have been invited can join ${groupName}.',
+              mapping={'groupName': self.groupInfo.name})
+        msg = translate(m)
         raise CannotJoin(msg)
 
 
 class OddSubscriber(Subscriber):
     def subscribe(self, userInfo, email, request):
         assert self.groupVisibility.isOdd
-        msg = _('odd-group-cannot-join', 'People cannot join ${groupName}',
-                mapping={'groupName': self.groupInfo.name})
+        m = _('odd-group-cannot-join', 'People cannot join ${groupName}.',
+              mapping={'groupName': self.groupInfo.name})
+        msg = translate(m)
         raise CannotJoin(msg)
