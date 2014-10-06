@@ -14,13 +14,11 @@
 ############################################################################
 from __future__ import absolute_import, unicode_literals
 from email.utils import parseaddr
-from logging import getLogger
-log = getLogger('gs.group.member.subscribe.listcommand')
 from zope.component import createObject
 from zope.cachedescriptors.property import Lazy
 from gs.group.list.command import CommandResult, CommandABC
 from gs.group.privacy.visibility import GroupVisibility
-#from .audit import (SubscribeAuditor, CONFIRM)
+from .audit import (SubscribeAuditor, SUBSCRIBE, CANNOT_JOIN, GROUP_MEMBER)
 from .interfaces import ISubscriber
 from .notify import NotifyCannotSubscribe
 from .subscribers import CannotJoin, GroupMember
@@ -50,21 +48,19 @@ class SubscribeCommand(CommandABC):
         userInfo = self.get_userInfo(addr)
         groupVisibility = GroupVisibility(self.groupInfo)
         subscriber = ISubscriber(groupVisibility)
+        auditor = SubscribeAuditor(self.context, userInfo, self.groupInfo)
+        auditor.info(SUBSCRIBE, addr)
         try:
             subscriber.subscribe(userInfo, email, request)
             retval = CommandResult.commandStop
         except CannotJoin as cj:
+            auditor.info(CANNOT_JOIN, addr, cj.message)
             groupsFolder = self.groupInfo.groupObj.aq_parent
             notifier = NotifyCannotSubscribe(groupsFolder, request)
             notifier.notify(cj, addr, self.groupInfo)
             retval = CommandResult.commandStop
         except GroupMember:
-            m = 'Ignorning the "subscribe" command from {user.name} '\
-                '({user.id}) <{addr}> because the person is already a '\
-                'member of {group.name} ({group.id}) on {site.name} '\
-                '({site.id}).'
-            msg = m.format(user=userInfo, addr=addr, group=self.groupInfo,
-                           site=self.groupInfo.siteInfo)
-            log.info(msg)
+            assert userInfo, 'None is a group member.'
+            auditor.info(GROUP_MEMBER, addr)
             retval = CommandResult.notACommand
         return retval

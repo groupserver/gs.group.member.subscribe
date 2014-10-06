@@ -64,6 +64,10 @@ class ConfirmCommand(CommandABC):
                 confirmationInfo = Confirmation(self.context, **ci)
                 if (confirmationInfo.email == addr):
                     try:
+                        auditor = SubscribeAuditor(
+                            self.context, confirmationInfo.userInfo,
+                            confirmationInfo.groupInfo)
+                        auditor.info(CONFIRM, addr)
                         # VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
                         self.join(confirmationInfo, request)
                         # AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA

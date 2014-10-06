@@ -98,7 +98,10 @@ class TestConfirmCommand(TestCase):
         self.assertIn('does not match', args[0])
 
     @patch.object(ConfirmCommand, 'query')
-    def test_info_found_join(self, mockQuery):
+    @patch.object(
+        gs.group.member.subscribe.subscribecommand.SubscribeAuditor,
+        'info')
+    def test_info_found_join(self, mockQuery, audit):
         'Is ConfirmCommand.join called if the address matches?'
         mockQuery.get_confirmation.return_value = \
             self.faux_query('member@example.com')
@@ -114,4 +117,29 @@ class TestConfirmCommand(TestCase):
         patchedJoin.assert_called_with(pc.return_value, None)
         self.assertEqual(CommandResult.commandStop, r)
 
-    # TODO Test a member joining
+    @patch.object(ConfirmCommand, 'query')
+    @patch.object(
+        gs.group.member.subscribe.subscribecommand.SubscribeAuditor,
+        'info')
+    def test_info_found_join_member(self, mockQuery, audit):
+        'Is a member prevented from joining?'
+        mockQuery.get_confirmation.return_value = \
+            self.faux_query('member@example.com')
+        e = faux_email(self.confirmSubject)
+        with patch.object(ConfirmCommand, 'join') as patchedJoin:
+            patchedJoin.side_effect = \
+                gs.group.member.subscribe.confirmcommand.GroupMember
+
+            n = 'gs.group.member.subscribe.confirmcommand.Confirmation'
+            with patch(n) as pc:
+                pc.return_value = \
+                    FauxConfirmation(email='member@example.com')
+                c = ConfirmCommand(self.fauxGroup)
+
+                with patch('gs.group.member.subscribe.confirmcommand.'
+                           'NotifyAlreadyAMember') as notify:
+                    r = c.process(e, None)
+
+        patchedJoin.assert_called_with(pc.return_value, None)
+        self.assertEqual(CommandResult.commandStop, r)
+        self.assertEqual(1, notify.call_count, 'Notify not called')
