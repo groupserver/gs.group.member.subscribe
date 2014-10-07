@@ -13,6 +13,7 @@
 #
 ############################################################################
 from __future__ import unicode_literals
+from zope.component import createObject
 from zope.i18n import translate
 from gs.content.email.base import (NotifierABC, GroupNotifierABC,
                                    AnonymousNotifierABC)
@@ -87,6 +88,11 @@ class NotifyCannotConfirm(AnonymousNotifierABC):
     'The email telling someone that the Confirmation ID is garbled'
     textTemplateName = 'gs-group-member-subscribe-confirm-problems.txt'
     htmlTemplateName = 'gs-group-member-subscribe-confirm-problems.html'
+
+    @property
+    def siteInfo(self):
+        retval = createObject('groupserver.SiteInfo', self.context)
+        return retval
 
     def notify(self, addr, confirmationId):
         subject = _('confirm-failed-id-subject',

@@ -105,9 +105,6 @@ class ConfirmCommand(CommandABC):
             retval = CommandResult.notACommand
         return retval
 
-    def get_groupInfo_siteInfo(self, confirmationInfo):
-        'Get the groupInfo and siteInfo from the confirmationInfo'
-
     def verify_address(self, userInfo, addr):
         # TODO: Now the Add code and this code does this. Cut 'n' paste
         #       software engineereing for now, but the verification code
@@ -125,8 +122,8 @@ class ConfirmCommand(CommandABC):
             raise GroupMember('Already a member of the group')
 
         auditor = SubscribeAuditor(
-            confirmationInfo.site, confirmationInfo.groupInfo,
-            confirmationInfo.userInfo)
+            confirmationInfo.site, confirmationInfo.userInfo,
+            confirmationInfo.groupInfo)
         auditor.info(CONFIRM)
 
         self.verify_address(confirmationInfo.userInfo,
