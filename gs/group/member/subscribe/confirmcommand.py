@@ -93,6 +93,8 @@ class ConfirmCommand(CommandABC):
                 m = 'Issues with confirm command from <{addr}>: {subject}'
                 msg = m.format(addr=addr, subject=email['Subject'])
                 log.info(msg)
+                notifier = NotifyCannotConfirm(self.context, request)
+                notifier.notify(addr, confirmationId)
                 retval = CommandResult.commandStop
         else:  # not confirmationId
             # Assume it is a normal email.

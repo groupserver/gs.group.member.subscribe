@@ -73,17 +73,17 @@ class RefuseSubscriptionText(RefuseSubscription, TextMixin):
 
 class ConfirmProblems(GroupEmail):
     'Problems confirming the subscription'
-    @Lazy
-    def supportEmail(self):
+
+    def supportEmail(self, confirmationId):
         subject = _('confirm-problems-subject',
                     'Problems with confirmation')
         translatedSubject = translate(subject)
         body = _('support-message-confirm-subscription-body',
                  'Hello,\n\nI received an email saying that there were '
-                 'problems when I tried to \nconfirm my subscription to '
-                 '${groupName}\n    ${groupUrl}\nand...',
-                 mapping={'groupName': self.groupInfo.name,
-                          'groupUrl': self.groupInfo.url})
+                 'problems when I tried to confirm\nmy subscription (using '
+                 'the confirmation ID "${ID}"). Could you please\nhelp me '
+                 'figure out what went wrong?\n',
+                 mapping={'ID': confirmationId})
         translatedBody = translate(body)
         retval = self.mailto(self.siteInfo.get_support_email(),
                              translatedSubject, translatedBody)

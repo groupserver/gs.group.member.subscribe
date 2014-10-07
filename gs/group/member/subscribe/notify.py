@@ -88,7 +88,7 @@ class NotifyCannotConfirm(AnonymousNotifierABC):
     textTemplateName = 'gs-group-member-subscribe-confirm-problems.txt'
     htmlTemplateName = 'gs-group-member-subscribe-confirm-problems.html'
 
-    def notify(self, groupInfo, addr, confirmationId):
+    def notify(self, addr, confirmationId):
         subject = _('confirm-failed-id-subject',
                     'Problem confirming your subscription (action '
                     'required)')
@@ -98,8 +98,8 @@ class NotifyCannotConfirm(AnonymousNotifierABC):
         html = self.htmlTemplate(address=addr,
                                  confirmationId=confirmationId)
 
-        fromAddr = self.fromAddr(groupInfo.siteInfo)
+        fromAddr = self.fromAddr(self.siteInfo)
         message = self.create_message(addr, fromAddr, translatedSubject,
                                       text, html)
-        send_email(groupInfo.siteInfo.get_support_email(), addr, message)
+        send_email(self.siteInfo.get_support_email(), addr, message)
         self.reset_content_type()

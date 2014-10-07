@@ -123,17 +123,24 @@ class TestConfirmCommand(TestCase):
     @patch.multiple(ConfirmCommand, query=DEFAULT, can_confirm=DEFAULT)
     def test_cannot_confirm(self, info, query, can_confirm):
         'Is a stop called if we cannot confirm?'
-        query.get_confirmation.return_value = self.faux_query('missmatch')
-        e = faux_email(self.confirmSubject)
-        n = 'gs.group.member.subscribe.confirmcommand.Confirmation'
-        with patch(n) as pc:
+        queryReturn = self.faux_query('missmatch')
+        query.get_confirmation.return_value = queryReturn
+        can_confirm.return_value = False
+        with patch('gs.group.member.subscribe.confirmcommand.'
+                   'Confirmation') as pc:
             pc.return_value = FauxConfirmation()
-            can_confirm.return_value = False
-            c = ConfirmCommand(self.fauxGroup)
-            r = c.process(e, None)
+            with patch('gs.group.member.subscribe.confirmcommand.'
+                       'NotifyCannotConfirm') as ncc:
+                notifyInstance = ncc.return_value
+                c = ConfirmCommand(self.fauxGroup)
+                e = faux_email(self.confirmSubject)
+                r = c.process(e, None)
         self.assertEqual(CommandResult.commandStop, r)
         args, varArgs = info.call_args
         self.assertIn('Issues', args[0])
+        ncc.assert_called_once_with(self.fauxGroup, None)
+        notifyInstance .notify.assert_called_once_with(
+            'member@example.com', queryReturn['confirmationId'])
 
     @patch('gs.group.member.subscribe.confirmcommand.SubscribeAuditor')
     @patch.multiple(ConfirmCommand, query=DEFAULT, can_confirm=DEFAULT,

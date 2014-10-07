@@ -23,10 +23,11 @@
         However, there was a problem processing the request.
       </p>
       <!--Troubleshooting/return/warranty/damage information-->
-      <p i18n:translate="confirm-problem-contact">
+      <p i18n:translate="confirm-problem-contact"
+         tal:define="confirmationId options/confirmationId | nothing">
         Email us at
         <a tal:attributes="href view/supportEmail"
-           href="#"><code tal:content="view/siteInfo/get_support_email">this address</code></a>
+           href="#"><code tal:content="python:view.siteInfo.get_support_email(confirmationId)">this address</code></a>
         and we will see what we can do to help.
       </p>
       <!--Website address-->
