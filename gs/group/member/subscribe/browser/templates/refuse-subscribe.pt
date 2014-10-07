@@ -18,7 +18,7 @@
       <p i18n:translate="salutation">
         Hello,
       </p>
-      <p>
+      <p i18n:translate="cannot-join-body">
         We received an email asking if you could subscribe to
         <span tal:content="view/groupInfo/name">This Group</span>.
         However, you cannot subscribe to the group:
