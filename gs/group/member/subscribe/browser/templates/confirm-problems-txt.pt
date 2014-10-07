@@ -2,10 +2,10 @@
 
 <tal:block
   define="reason options/reason | nothing;
-          m string:We received an email from you trying to confirm your subscription to ${view/groupInfo/name}. We can confirm that you are already a member of this group."
+          m string:We received an email from you trying to confirm your subscription to ${view/groupInfo/name}. However, there was a problem processing the request."
   content="python:view.fill(m)" />
 
-If you have any problems, email us at
+Email us and we will see what we can do to help:
   <tal:block content="view/siteInfo/get_support_email">this address</tal:block>
 
 Kind regards,

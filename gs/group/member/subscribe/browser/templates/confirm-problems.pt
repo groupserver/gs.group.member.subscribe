@@ -12,7 +12,7 @@
   </head>
   <body>
     <div metal:fill-slot="body"
-         tal:define="userInfo options/userInfo | view/loggedInUser">
+         tal:define="userInfo options/userInfo | view/loggedInUserInfo">
       <h2 i18n:translate="confirm-problem-heading">Problem with membership
         confirmation</h2>
       <p i18n:translate="salutation">
@@ -26,8 +26,8 @@
       <p i18n:translate="confirm-problem-contact"
          tal:define="confirmationId options/confirmationId | nothing">
         Email us at
-        <a tal:attributes="href view/supportEmail"
-           href="#"><code tal:content="python:view.siteInfo.get_support_email(confirmationId)">this address</code></a>
+        <a tal:attributes="href python:view.supportEmail(confirmationId)"
+           href="#"><code tal:content="view/siteInfo/get_support_email">this address</code></a>
         and we will see what we can do to help.
       </p>
       <!--Website address-->

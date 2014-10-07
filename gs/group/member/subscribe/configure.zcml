@@ -86,7 +86,7 @@
   <browser:page
     for="gs.group.base.interfaces.IGSGroupMarker"
     name="gs-group-member-subscribe-confirm-problems.txt"
-    class=".notifymessages.ConfirmProblems"
+    class=".notifymessages.ConfirmProblemsText"
     template="browser/templates/confirm-problems-txt.pt"
     permission="zope2.View"/>
 
