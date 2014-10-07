@@ -69,3 +69,29 @@ class RefuseSubscriptionText(RefuseSubscription, TextMixin):
         super(RefuseSubscriptionText, self).__init__(context, request)
         filename = 'refuse-%s.txt' % self.groupInfo.id
         self.set_header(filename)
+
+
+class ConfirmProblems(GroupEmail):
+    'Problems confirming the subscription'
+    @Lazy
+    def supportEmail(self):
+        subject = _('confirm-problems-subject',
+                    'Problems with confirmation')
+        translatedSubject = translate(subject)
+        body = _('support-message-confirm-subscription-body',
+                 'Hello,\n\nI received an email saying that there were '
+                 'problems when I tried to \nconfirm my subscription to '
+                 '${groupName}\n    ${groupUrl}\nand...',
+                 mapping={'groupName': self.groupInfo.name,
+                          'groupUrl': self.groupInfo.url})
+        translatedBody = translate(body)
+        retval = self.mailto(self.siteInfo.get_support_email(),
+                             translatedSubject, translatedBody)
+        return retval
+
+
+class ConfirmProblemsText(ConfirmProblems, TextMixin):
+    def __init__(self, context, request):
+        super(ConfirmProblemsText, self).__init__(context, request)
+        filename = 'problems-%s.txt' % self.groupInfo.id
+        self.set_header(filename)

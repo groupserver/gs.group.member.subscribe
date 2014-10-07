@@ -26,9 +26,12 @@ from gs.profile.email.base import EmailUser
 from gs.profile.email.verify import EmailVerificationUser
 from .audit import (SubscribeAuditor, CONFIRM)
 from .subscribers import GroupMember
-from .notify import (NotifyAlreadyAMember, NotifyCannotConfirmAddress,
-                     NotifyCannotConfirmId)
+from .notify import (NotifyCannotConfirm)
 from .queries import ConfirmationQuery
+
+
+class Issues(Exception):
+    'There were issues'
 
 
 class ConfirmCommand(CommandABC):
@@ -54,51 +57,43 @@ class ConfirmCommand(CommandABC):
         retval = idComponents[0].split('-')[1] if idComponents else None
         return retval
 
+    @staticmethod
+    def can_confirm(addr, confirmationInfo):
+        retval = (
+            confirmationInfo
+            and (not confirmationInfo.hasResponse)
+            and (confirmationInfo.email == addr)
+            and not (user_member_of_group(confirmationInfo.userInfo,
+                                          confirmationInfo.groupInfo)))
+        assert type(retval) == bool
+        return retval
+
     def process(self, email, request):
         'Process the subscription confirmation'
         addr = parseaddr(email['From'])[1]
         confirmationId = self.get_confirmation_id(email)
         if confirmationId:
-            ci = self.query.get_confirmation(addr, confirmationId)
-            if ci:
-                confirmationInfo = Confirmation(self.context, **ci)
-                if (confirmationInfo.email == addr):
-                    try:
+            try:
+                ci = self.query.get_confirmation(addr, confirmationId)
+                if ci:
+                    confirmationInfo = Confirmation(self.context, **ci)
+                    if (self.can_confirm(addr, confirmationInfo)):
                         auditor = SubscribeAuditor(
                             self.context, confirmationInfo.userInfo,
                             confirmationInfo.groupInfo)
                         auditor.info(CONFIRM, addr)
-                        # VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+
                         self.join(confirmationInfo, request)
-                        # AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                    except GroupMember:
-                        notifier = NotifyAlreadyAMember(
-                            confirmationInfo.site, request)
-                        notifier.notify(confirmationInfo.userInfo,
-                                        confirmationInfo.groupInfo)
-                    retval = CommandResult.commandStop
-                else:  # confirmationInfo.email != addr
-                    m = 'Email address <{addr}> does not match that in '\
-                        'the confirmation info <{confirmationAddr}>: '\
-                        '{subject}'
-                    msg = m.format(
-                        addr=addr, confirmationAddr=confirmationInfo.email,
-                        subject=email['Subject'])
-                    log.info(msg)
-                    notifier = NotifyCannotConfirmAddress(
-                        confirmationInfo.site, request)
-                    notifier.notify(confirmationInfo.userInfo,
-                                    confirmationInfo.groupInfo,
-                                    addr, confirmationInfo.email)
-                    retval = CommandResult.commandStop
-            else:  # confirmationId and (not ci)
-                # Found an "ID-" in the confirmation-email, but no matching
-                # confirmation ID in the database.
-                m = 'No confirmation information found in command from '\
-                    '<{addr}>: {subject}'
+                        retval = CommandResult.commandStop
+                    else:
+                        raise Issues()
+                else:
+                    raise Issues()
+            except Issues:
+                m = 'Issues with confirm command from <{addr}>: {subject}'
                 msg = m.format(addr=addr, subject=email['Subject'])
                 log.info(msg)
-                notifier = NotifyCannotConfirmId(self.context, request)
+                notifier = NotifyCannotConfirm(self.context, request)
                 notifier.notify(confirmationInfo.groupInfo, addr,
                                 confirmationId)
                 retval = CommandResult.commandStop
@@ -147,13 +142,14 @@ class ConfirmCommand(CommandABC):
 class Confirmation(object):
 
     def __init__(self, context, email, confirmationId, userId, groupId,
-                 siteId):
+                 siteId, responseDate):
         self.context = context
         self.email = email
         self.confirmationId = confirmationId
         self.userId = userId
         self.groupId = groupId
         self.siteId = siteId
+        self.hasResponse = responseDate is not None
 
         # Because the email comes into Support we may be on a totally
         # different site. Get the correct site as the context.

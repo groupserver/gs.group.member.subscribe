@@ -83,30 +83,10 @@ class NotifyAlreadyAMember(NotifierABC):
         self.reset_content_type()
 
 
-class NotifyCannotConfirmAddress(AnonymousNotifierABC):
-    'The email telling someone that the From address does not match'
-    textTemplateName = 'gs-group-member-subscribe-confirm-fail-addr.txt'
-    htmlTemplateName = 'gs-group-member-subscribe-confirm-fail-addr.html'
-
-    def notify(self, groupInfo, addr, confirmAddr):
-        subject = _('confirm-failed-addr-subject',
-                    'Problem confirming your subscription to ${groupName}',
-                    mapping={'groupName': groupInfo.name})
-        translatedSubject = translate(subject)
-        text = self.textTemplate(groupInfo=groupInfo)
-        html = self.htmlTemplate(groupInfo=groupInfo)
-
-        fromAddr = self.fromAddr(groupInfo.siteInfo)
-        message = self.create_message(addr, fromAddr, translatedSubject,
-                                      text, html)
-        send_email(groupInfo.siteInfo.get_support_email(), addr, message)
-        self.reset_content_type()
-
-
-class NotifyCannotConfirmId(AnonymousNotifierABC):
+class NotifyCannotConfirm(AnonymousNotifierABC):
     'The email telling someone that the Confirmation ID is garbled'
-    textTemplateName = 'gs-group-member-subscribe-confirm-fail-id.txt'
-    htmlTemplateName = 'gs-group-member-subscribe-confirm-fail-id.html'
+    textTemplateName = 'gs-group-member-subscribe-confirm-problems.txt'
+    htmlTemplateName = 'gs-group-member-subscribe-confirm-problems.html'
 
     def notify(self, groupInfo, addr, confirmationId):
         subject = _('confirm-failed-id-subject',

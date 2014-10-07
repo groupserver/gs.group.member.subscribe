@@ -1,0 +1,41 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="gs.group.member.subscribe"
+      metal:use-macro="context/@@groupserver_email_layout/page">
+  <head>
+    <title metal:fill-slot="title">
+      <tal:block i18n:translate="">Problem with membership confirmation:</tal:block>
+      <span tal:replace="view/siteInfo/name">Site</span>
+    </title>
+  </head>
+  <body>
+    <div metal:fill-slot="body"
+         tal:define="userInfo options/userInfo | view/loggedInUser">
+      <h2 i18n:translate="confirm-problem-heading">Problem with membership
+        confirmation</h2>
+      <p i18n:translate="salutation">
+        Hello,
+      </p>
+      <p i18n:translate="already-a-member-body">
+        We received an email from you trying to confirm a subscription.
+        However, there was a problem processing the request.
+      </p>
+      <!--Troubleshooting/return/warranty/damage information-->
+      <p i18n:translate="confirm-problem-contact">
+        Email us at
+        <a tal:attributes="href view/supportEmail"
+           href="#"><code tal:content="view/siteInfo/get_support_email">this address</code></a>
+        and we will see what we can do to help.
+      </p>
+      <!--Website address-->
+      <p class="closing" i18n:translate="closing">
+        Kind regards,<br/>
+        <span>The
+        <span tal:content="view/siteInfo/name">Site</span>
+        Team</span>
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+<tal:block xmlns:tal="http://xml.zope.org/namespaces/tal">Hello,
+
+<tal:block
+  define="reason options/reason | nothing;
+          m string:We received an email from you trying to confirm your subscription to ${view/groupInfo/name}. We can confirm that you are already a member of this group."
+  content="python:view.fill(m)" />
+
+If you have any problems, email us at
+  <tal:block content="view/siteInfo/get_support_email">this address</tal:block>
+
+Kind regards,
+  The <tal:block content="view/siteInfo/name">Site</tal:block> Team
+
+------------------------------------------------------------------------
+
+Privacy
+  <tal:block content="string:${view/siteInfo/url}/policies/privacy"/>
+
+Acceptable Use
+  <tal:block content="string:${view/siteInfo/url}/policies/aup"/>
+
+Terms of Service
+  <tal:block content="string:${view/siteInfo/url}/policies/tos"/>
+</tal:block>

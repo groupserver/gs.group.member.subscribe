@@ -50,7 +50,7 @@ class ConfirmationQuery(object):
         s = ct.select()
         s.append_whereclause(ct.c.email == email)
         s.append_whereclause(ct.c.confirmation_id == confirmationId)
-        s.append_whereclause(ct.c.response_date == None)  # lint: ok
+
         session = getSession()
         r = session.execute(s).fetchone()
         retval = None
@@ -60,5 +60,6 @@ class ConfirmationQuery(object):
                 'confirmationId': r['confirmation_id'],
                 'userId': r['user_id'],
                 'groupId': r['group_id'],
-                'siteId': r['site_id'], }
+                'siteId': r['site_id'],
+                'responseDate': r['response_date'], }
         return retval

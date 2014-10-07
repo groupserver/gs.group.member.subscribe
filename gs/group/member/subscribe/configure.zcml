@@ -77,10 +77,20 @@
     permission="zope2.View"/>
 
   <!--TODO: Already a member notifications -->
-  <!--TODO: Address-mismatch in confirmation -->
-  <!--TODO: ID not foun din confirmation -->
+  <browser:page
+    for="gs.group.base.interfaces.IGSGroupMarker"
+    name="gs-group-member-subscribe-confirm-problems.html"
+    class=".notifymessages.ConfirmProblems"
+    template="browser/templates/confirm-problems.pt"
+    permission="zope2.View"/>
+  <browser:page
+    for="gs.group.base.interfaces.IGSGroupMarker"
+    name="gs-group-member-subscribe-confirm-problems.txt"
+    class=".notifymessages.ConfirmProblems"
+    template="browser/templates/confirm-problems-txt.pt"
+    permission="zope2.View"/>
 
-  <!-- The confirm command -->
+ <!-- The confirm command -->
   <adapter
     name="confirm"
     for="gs.group.base.interfaces.IGSGroupMarker"
