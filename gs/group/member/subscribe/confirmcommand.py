@@ -60,7 +60,7 @@ class ConfirmCommand(CommandABC):
     @staticmethod
     def can_confirm(addr, confirmationInfo):
         retval = (
-            confirmationInfo
+            bool(confirmationInfo)
             and (not confirmationInfo.hasResponse)
             and (confirmationInfo.email == addr)
             and not (user_member_of_group(confirmationInfo.userInfo,
@@ -93,9 +93,6 @@ class ConfirmCommand(CommandABC):
                 m = 'Issues with confirm command from <{addr}>: {subject}'
                 msg = m.format(addr=addr, subject=email['Subject'])
                 log.info(msg)
-                notifier = NotifyCannotConfirm(self.context, request)
-                notifier.notify(confirmationInfo.groupInfo, addr,
-                                confirmationId)
                 retval = CommandResult.commandStop
         else:  # not confirmationId
             # Assume it is a normal email.

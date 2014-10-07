@@ -55,3 +55,4 @@ class FauxConfirmation(object):
 
         self.groupInfo = FauxGroupInfo()
         self.groupInfo.id = groupId
+        self.hasResponse = False

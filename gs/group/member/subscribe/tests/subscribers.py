@@ -37,19 +37,19 @@ class FailSubscriberTest(TestCase):
         'Test that we always fail at joining an odd group'
         j = OddSubscriber(FauxVisibility())
         j.groupVisibility.isOdd = True
-        self.assertFailSubscribe(j, 'odd-group-cannot-join')
+        self.assertFailSubscribe(j, 'cannot')
 
     def test_secret_subscribe_fail(self):
         'Test that we always fail at joining a secret group'
         j = SecretSubscriber(FauxVisibility())
         j.groupVisibility.isSecret = True
-        self.assertFailSubscribe(j, 'secret-group-cannot-join')
+        self.assertFailSubscribe(j, 'invited')
 
     def test_private_join_fail(self):
         'Test that we always fail at joining a secret group'
         j = PrivateSubscriber(FauxVisibility())
         j.groupVisibility.isPrivate = True
-        self.assertFailSubscribe(j, 'private-group-cannot-join')
+        self.assertFailSubscribe(j, 'request')
 
 
 class SuccessSubscriberTest(TestCase):
@@ -61,7 +61,7 @@ class SuccessSubscriberTest(TestCase):
         j.groupVisibility.isPublicToSite = True
         with self.assertRaises(CannotJoin) as e:
             j.subscribe(None, faux_email(), None)
-        self.assertIn('public-site-group-cannot-join', str(e.exception))
+        self.assertIn('Only members', str(e.exception))
 
     @patch('gs.group.member.subscribe.subscribers.user_member_of_site')
     def test_ptsm_join_not_site_member(self, umos):
@@ -72,7 +72,7 @@ class SuccessSubscriberTest(TestCase):
         umos.return_value = False
         with self.assertRaises(CannotJoin) as e:
             j.subscribe(u, faux_email(), None)
-        self.assertIn('public-site-group-cannot-join', str(e.exception))
+        self.assertIn('Only members', str(e.exception))
 
     @patch('gs.group.member.subscribe.subscribers.user_member_of_site')
     def test_ptsm_join_group_member(self, umos):
