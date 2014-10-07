@@ -13,7 +13,7 @@
 #
 ############################################################################
 from __future__ import absolute_import, unicode_literals
-from mock import patch
+from mock import patch, DEFAULT
 from unittest import TestCase
 from gs.group.member.subscribe.confirmcommand import (ConfirmCommand)
 import gs.group.member.subscribe.confirmcommand  # lint:ok
@@ -118,26 +118,22 @@ class TestConfirmCommand(TestCase):
         r = c.can_confirm('a.person@example.com', fc)
         self.assertFalse(r)
 
-    @patch.object(ConfirmCommand, 'query')
-    def test_info_found_addr_missmatch(self, mockQuery):
-        'Is a stop called if there is confirmation info found?'
-        mockQuery.get_confirmation.return_value = \
-            self.faux_query('missmatch')
-        e = faux_email(self.confirmSubject)
-        n = 'gs.group.member.subscribe.confirmcommand.log'
-        with patch(n) as patchedLog:
-            patchedLog.info.return_value = None
-            n = 'gs.group.member.subscribe.confirmcommand.Confirmation'
-            with patch(n) as pc:
-                pc.return_value = FauxConfirmation()
-                n = 'gs.group.member.subscribe.confirmcommand.'\
-                    'NotifyCannotConfirm'
-                with patch(n):
-                    c = ConfirmCommand(self.fauxGroup)
-                    r = c.process(e, None)
-        args, varArgs = patchedLog.info.call_args
+    # End of tests of ConfirmCommand.can_confirm
 
+    @patch.object(gs.group.member.subscribe.confirmcommand.log, 'info')
+    @patch.multiple(ConfirmCommand, query=DEFAULT, can_confirm=DEFAULT)
+    def test_cannot_confirm(self, info, query, can_confirm):
+        'Is a stop called if we cannot confirm?'
+        query.get_confirmation.return_value = self.faux_query('missmatch')
+        e = faux_email(self.confirmSubject)
+        n = 'gs.group.member.subscribe.confirmcommand.Confirmation'
+        with patch(n) as pc:
+            pc.return_value = FauxConfirmation()
+            can_confirm.return_value = False
+            c = ConfirmCommand(self.fauxGroup)
+            r = c.process(e, None)
         self.assertEqual(CommandResult.commandStop, r)
+        args, varArgs = info.call_args
         self.assertIn('Issues', args[0])
 
     @patch.object(ConfirmCommand, 'query')
