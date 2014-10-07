@@ -57,9 +57,8 @@ class TestConfirmCommand(TestCase):
         'Is a stop called if there is no confirmation info found?'
         mockQuery.get_confirmation.return_value = None
         e = faux_email(self.confirmSubject)
-        n = 'gs.group.member.subscribe.confirmcommand.'\
-            'NotifyCannotConfirm'
-        with patch(n):
+        with patch('gs.group.member.subscribe.confirmcommand.'
+                   'NotifyCannotConfirm'):
             c = ConfirmCommand(self.fauxGroup)
             r = c.process(e, None)
 
@@ -136,49 +135,19 @@ class TestConfirmCommand(TestCase):
         args, varArgs = info.call_args
         self.assertIn('Issues', args[0])
 
-    @patch.object(ConfirmCommand, 'query')
-    @patch.object(
-        gs.group.member.subscribe.subscribecommand.SubscribeAuditor,
-        'info')
-    def _test_info_found_join(self, mockQuery, audit):
-        'Is ConfirmCommand.join called if the address matches?'
-        mockQuery.get_confirmation.return_value = \
-            self.faux_query('member@example.com')
+    @patch('gs.group.member.subscribe.confirmcommand.SubscribeAuditor')
+    @patch.multiple(ConfirmCommand, query=DEFAULT, can_confirm=DEFAULT,
+                    join=DEFAULT)
+    def test_confirm(self, info, query, can_confirm, join):
+        'Can we confirm?'
+        query.get_confirmation.return_value = self.faux_query('missmatch')
         e = faux_email(self.confirmSubject)
-        with patch.object(ConfirmCommand, 'join') as patchedJoin:
-            n = 'gs.group.member.subscribe.confirmcommand.Confirmation'
-            with patch(n) as pc:
-                pc.return_value = \
-                    FauxConfirmation(email='member@example.com')
-                c = ConfirmCommand(self.fauxGroup)
-                r = c.process(e, None)
-
-        patchedJoin.assert_called_with(pc.return_value, None)
+        n = 'gs.group.member.subscribe.confirmcommand.Confirmation'
+        with patch(n) as pc:
+            fc = FauxConfirmation()
+            pc.return_value = fc
+            can_confirm.return_value = True
+            c = ConfirmCommand(self.fauxGroup)
+            r = c.process(e, None)
         self.assertEqual(CommandResult.commandStop, r)
-
-    @patch.object(ConfirmCommand, 'query')
-    @patch.object(
-        gs.group.member.subscribe.subscribecommand.SubscribeAuditor,
-        'info')
-    def _test_info_found_join_member(self, mockQuery, audit):
-        'Is a member prevented from joining?'
-        mockQuery.get_confirmation.return_value = \
-            self.faux_query('member@example.com')
-        e = faux_email(self.confirmSubject)
-        with patch.object(ConfirmCommand, 'join') as patchedJoin:
-            patchedJoin.side_effect = \
-                gs.group.member.subscribe.confirmcommand.GroupMember
-
-            n = 'gs.group.member.subscribe.confirmcommand.Confirmation'
-            with patch(n) as pc:
-                pc.return_value = \
-                    FauxConfirmation(email='member@example.com')
-                c = ConfirmCommand(self.fauxGroup)
-
-                with patch('gs.group.member.subscribe.confirmcommand.'
-                           'NotifyCannotConfirm') as notify:
-                    r = c.process(e, None)
-
-        patchedJoin.assert_called_with(pc.return_value, None)
-        self.assertEqual(CommandResult.commandStop, r)
-        self.assertEqual(1, notify.call_count, 'Notify not called')
+        join.assert_called_once_with(fc, None)
