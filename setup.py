@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 ############################################################################
 #
-# Copyright © 2010, 2011, 2012, 2013, 2014 OnlineGroups.net and
-# Contributors.
+# Copyright © 2014 OnlineGroups.net and Contributors.
 #
 # All Rights Reserved.
 #
@@ -47,7 +46,7 @@ setup(
     keywords='user, group, member, group member, subscribe, email',
     author='Michael JasonSmith',
     author_email='mpj17@onlinegroups.net',
-    url='https://github/groupserver/gs.group.member.subscribe/',
+    url='https://github.com/groupserver/gs.group.member.subscribe/',
     license='ZPL 2.1',
     packages=find_packages(exclude=['ez_setup']),
     namespace_packages=['gs', 'gs.group', 'gs.group.member'],
@@ -56,35 +55,31 @@ setup(
     install_requires=[
         'setuptools',
         'pytz',
+        'SQLAlchemy',
         'zope.browserpage',
         'zope.cachedescriptors',
         'zope.component',
-        'zope.event',
-        'zope.formlib',
-        'zope.interface',
         'zope.i18n',
         'zope.i18nmessageid',
+        'zope.interface',
         'zope.tal',
         'zope.tales',
-        'zope.viewlet',
-        'Zope2',
         'gs.content.email.base',
         'gs.content.email.layout',
-        'gs.content.form.base',
-        'gs.content.layout',
         'gs.core',
-        'gs.group.base',
+        'gs.database',
+        'gs.email',
+        'gs.group.list.command',
         'gs.group.member.base',
-        'gs.group.member.viewlet',
+        'gs.group.privacy',
         'gs.profile.email.base',
+        'gs.profile.email.verify',
         'gs.profile.notify',
         'Products.GSAuditTrail',
-        'Products.GSGroup',
         'Products.GSProfile',
         'Products.XWFCore',
     ],
-    extras_require={'docs': ['Sphinx', ], },
-    test_suite="gs.group.member.join.tests.test_all",
+    test_suite="gs.group.member.subscribe.tests.test_all",
     tests_require=['mock', ],
     entry_points="""# -*- Entry points: -*-
     """,
