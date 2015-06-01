@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 version = '1.0.1'
-release = False
+release = True
 
 #--------------------------------------------------------------------------#
 import sys
