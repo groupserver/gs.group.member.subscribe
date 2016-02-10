@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-version = '1.0.1'
-release = True
+version = '1.0.2'
+release = False
 
 #--------------------------------------------------------------------------#
 import sys
@@ -62,7 +62,7 @@ def get_version():
         if release:
             version_string = version
         else:
-            version_string = "%s.dev%s+%s" % (version, datestring, globalid)
+            version_string = "%s.dev%s" % (version, datestring)
 
     except (CommandError, ValueError, TypeError):
         # --=mpj17=-- Usually because we are building out a source-egg,
