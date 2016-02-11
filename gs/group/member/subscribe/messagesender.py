@@ -27,7 +27,7 @@ class GroupMessageSender(MessageSender):
 
     @Lazy
     def groupInfo(self):
-        retval = IGSGroupInfo(self.group)
+        retval = IGSGroupInfo(self.context)
         return retval
 
     @Lazy

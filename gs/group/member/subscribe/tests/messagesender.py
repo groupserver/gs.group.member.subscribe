@@ -42,8 +42,16 @@ class TestGroupMessageSender(TestCase):
     def test_from_header_from_address_none(self, m_mLI, m_gI):
         m_gI().name = 'Example group'
         m_mLI().get_property.return_value = 'group@example.com'
-        context = MagicMock()
-        ms = GroupMessageSender(context, MagicMock())
+        ms = GroupMessageSender(MagicMock(), MagicMock())
         r = ms.from_header_from_address()
 
         self.assertEqual('Example group <group@example.com>', r)
+
+    @patch('gs.group.member.subscribe.messagesender.MessageSender.from_header_from_address')
+    def test_from_header_from_address(self, m_super_fhfa):
+        e = 'Other address <other@example.com>'
+        m_super_fhfa.return_value = e
+        ms = GroupMessageSender(MagicMock(), MagicMock())
+        r = ms.from_header_from_address('other@example.com')
+
+        self.assertEqual(e, r)
