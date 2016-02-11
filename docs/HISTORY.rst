@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.2 (2016-02-09)
+1.0.2 (2016-02-11)
 ------------------
 
 * Using the email address of the group as the ``From`` address;
@@ -20,3 +20,5 @@ Changelog
 
 * Initial release, replacing the old code in
   ``Products.XWFMailingListManager``
+
+..  LocalWords:  Changelog
