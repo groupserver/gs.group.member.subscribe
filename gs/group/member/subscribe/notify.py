@@ -13,7 +13,6 @@
 #
 ############################################################################
 from __future__ import unicode_literals
-from zope.cachedescriptors.property import Lazy
 from zope.component import createObject
 from zope.i18n import translate
 from gs.content.email.base import (NotifierABC, GroupNotifierABC,
@@ -21,7 +20,7 @@ from gs.content.email.base import (NotifierABC, GroupNotifierABC,
 from gs.email import send_email
 from gs.profile.email.base.emailuser import EmailUser
 from gs.profile.notify import MessageSender
-from Products.GSGroup.interfaces import IGSMailingListInfo
+from .messagesender import GroupMessageSender
 from . import GSMessageFactory as _
 UTF8 = 'utf-8'
 
@@ -30,13 +29,6 @@ class ConfirmationNotifier(GroupNotifierABC):
     '''The email asking someone to confirm they want to be in a group.'''
     textTemplateName = 'gs-group-member-subscribe-confirm.txt'
     htmlTemplateName = 'gs-group-member-subscribe-confirm.html'
-
-    @Lazy
-    def groupEmail(self):
-        # --=mpj17==-- TODO: Move to the ABC
-        l = IGSMailingListInfo(self.groupInfo.groupObj)
-        retval = l.get_property('mailto')
-        return retval
 
     def notify(self, userInfo, toAddr, confirmationId):
         subject = _('confirm-subject',
@@ -48,12 +40,10 @@ class ConfirmationNotifier(GroupNotifierABC):
         emailUser = EmailUser(userInfo.user, userInfo)
         text = self.textTemplate(userInfo=userInfo, userEmail=emailUser)
         html = self.htmlTemplate(userInfo=userInfo, userEmail=emailUser)
-        ms = MessageSender(self.context, userInfo)
-        # We have to explicitly state the address because it has not
-        # (necessarially) been verified yet.
-        ms.send_message(translatedSubject, text, html,
-                        fromAddress=self.groupEmail,
-                        toAddresses=[toAddr])
+        gms = GroupMessageSender(self.context, userInfo)
+        # We have to explicitly state the To-address because it may not
+        # be verified yet.
+        gms.send_message(translatedSubject, text, html, toAddresses=[toAddr, ])
         self.reset_content_type()
 
 

@@ -14,14 +14,13 @@
 ############################################################################
 from __future__ import absolute_import, unicode_literals
 from unittest import TestSuite, main as unittest_main
-from gs.group.member.subscribe.tests.subscribecommand import (
-    TestSubscribeCommand)
-from gs.group.member.subscribe.tests.confirmcommand import (
-    TestConfirmCommand)
+from gs.group.member.subscribe.tests.confirmcommand import (TestConfirmCommand)
+from gs.group.member.subscribe.tests.messagesender import TestGroupMessageSender
+from gs.group.member.subscribe.tests.subscribecommand import (TestSubscribeCommand)
 from gs.group.member.subscribe.tests.subscribers import (
     FailSubscriberTest, SuccessSubscriberTest, SendConfirmationTest)
 testCases = (TestSubscribeCommand, TestConfirmCommand, FailSubscriberTest,
-             SuccessSubscriberTest, SendConfirmationTest)
+             SuccessSubscriberTest, SendConfirmationTest, TestGroupMessageSender)
 
 
 def load_tests(loader, tests, pattern):
